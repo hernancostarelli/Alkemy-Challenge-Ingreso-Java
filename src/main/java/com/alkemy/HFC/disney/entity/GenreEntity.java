@@ -35,6 +35,6 @@ public class GenreEntity {
     
     private String image;
 
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<MovieEntity> movies = new ArrayList<>();
 }

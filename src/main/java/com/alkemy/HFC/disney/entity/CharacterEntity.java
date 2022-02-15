@@ -41,6 +41,6 @@ public class CharacterEntity {
 
     private String story;
 
-    @ManyToMany(mappedBy = "characters", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "characters", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<MovieEntity> movies = new ArrayList<>();
 }
