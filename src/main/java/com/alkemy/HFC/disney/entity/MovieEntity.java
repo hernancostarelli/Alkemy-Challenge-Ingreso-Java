@@ -35,7 +35,7 @@ public class MovieEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(unique = true, name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "image")
     private String image;
@@ -53,21 +53,21 @@ public class MovieEntity {
     private Integer rating;
 
     //NTERMEDIATE TABLE BETWEEN CHARACTERS AND MOVIES
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     // fetch -> HACE QUE LA INICIALIZACIÓN SEA DE TIPO TEMPRANA, CADA VEZ QUE PIDA UNA
     // PELÍCULA, VA A VENIR CON TODOS LOS PERSONAJES
     @JoinTable(
-            name = "movie_characters", // NAME OF THE INTERMEDIATE TABLE
+            name = "movie_characters",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id"))
     private List<CharacterEntity> characters = new ArrayList<>();
 
     //INTERMEDIATE TABLE BETWEEN MOVIES AND GENRES
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     // fetch -> HACE QUE LA INICIALIZACIÓN SEA DE TIPO TEMPRANA, CADA VEZ QUE PIDA UNA
     // PELÍCULA, VA A VENIR CON TODOS LOS GÉNEROS
     @JoinTable(
-            name = "movie_genres", // NAME OF THE INTERMEDIATE TABLE
+            name = "movie_genres", 
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<GenreEntity> genres = new ArrayList<>();

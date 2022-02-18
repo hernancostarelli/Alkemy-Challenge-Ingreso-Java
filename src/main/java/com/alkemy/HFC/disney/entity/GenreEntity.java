@@ -30,7 +30,7 @@ public class GenreEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(unique = true, name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -39,7 +39,7 @@ public class GenreEntity {
     private String image;
 
     @Column(name = "movies")
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MovieEntity> movies = new ArrayList<>();
 
 //    //SOFT DELETE
