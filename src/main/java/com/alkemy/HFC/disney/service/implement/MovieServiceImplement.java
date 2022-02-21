@@ -48,11 +48,11 @@ public class MovieServiceImplement implements MovieService {
 
         MovieEntity movieEntity = movieMapper.movieDTO2Entity(movie, true);
 
-        MovieEntity movieSaved = movieRepository.save(movieEntity);
+        MovieEntity savedMovie = movieRepository.save(movieEntity);
 
-        MovieDTO result = movieMapper.movieEntity2DTO(movieSaved, false);
+        MovieDTO savedMovieDTO = movieMapper.movieEntity2DTO(savedMovie, false);
 
-        return result;
+        return savedMovieDTO;
     }
 
     @Override
@@ -151,7 +151,6 @@ public class MovieServiceImplement implements MovieService {
 
         movieRepository.save(movieEntity);
     }
-//    
 
     @Override
     public List<MovieDTO> getMovieByFilters(String title, Set<String> genre, String order) {

@@ -25,7 +25,7 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping
-    public ResponseEntity<List<MovieDTO>> getAllMoviesDetails() {
+    public ResponseEntity<List<MovieDTO>> getAllMovies() {
 
         List<MovieDTO> movies = movieService.getAllMovies();
 
@@ -68,7 +68,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteId(@PathVariable String idMovie) {
+    public ResponseEntity<Void> deleteMovie(@PathVariable String idMovie) {
 
         movieService.deleteMovie(idMovie);
 
