@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "genres")
@@ -24,24 +26,29 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+//
+// THIS QUERY PROVIDES THE SOFT DELETION, SUCH AS AN UPDATE ON THE GENRE
+@SQLDelete(sql = "UPDATE genres SET deleted = true WHERE id=?")
+//
+// WHEN SEARCHING FOR GENRES I HAVE TO DIFFERENTIATE BETWEEN THOSE THAT ARE 
+// DELETED AND THOSE THAT ARE NOT, WITH THIS CLAUSE I DIFFERENTIATE BETWEEN THEM
+@Where(clause = "deleted = false")
+//
 public class GenreEntity {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(unique = true, name = "id")
+    @Column(unique = true)
     private String id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "image")
     private String image;
 
-    @Column(name = "movies")
     @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MovieEntity> movies = new ArrayList<>();
 
-//    //SOFT DELETE
-//    private boolean deleted = Boolean.FALSE;
+    // ATTRIBUTE TO SOFT DELETE
+    private boolean deleted = Boolean.FALSE;
 }

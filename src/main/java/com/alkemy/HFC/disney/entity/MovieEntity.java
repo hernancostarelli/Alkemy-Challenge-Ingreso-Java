@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
@@ -29,18 +31,25 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+//
+// THIS QUERY PROVIDES THE SOFT DELETION, SUCH AS AN UPDATE ON THE MOVIE
+@SQLDelete(sql = "UPDATE movies SET deleted = true WHERE id=?")
+//
+// WHEN SEARCHING FOR MOVIES I HAVE TO DIFFERENTIATE BETWEEN THOSE THAT ARE 
+// DELETED AND THOSE THAT ARE NOT, WITH THIS CLAUSE I DIFFERENTIATE BETWEEN THEM
+@Where(clause = "deleted = false")
+//
 public class MovieEntity {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(unique = true, name = "id")
+    @Column(unique = true)
     private String id;
 
-    @Column(name = "image")
     private String image;
 
-    @Column(unique = true, name = "title")
+    @Column(unique = true)
     private String title;
 
     @Column(name = "date_of_creation")
@@ -48,50 +57,65 @@ public class MovieEntity {
     private LocalDate creationDate;
 
     @Nullable
-    @Column(name = "rating")
     // FROM 1 UP TO 5
     private Integer rating;
 
     //NTERMEDIATE TABLE BETWEEN CHARACTERS AND MOVIES
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    // fetch -> HACE QUE LA INICIALIZACIÓN SEA DE TIPO TEMPRANA, CADA VEZ QUE PIDA UNA
-    // PELÍCULA, VA A VENIR CON TODOS LOS PERSONAJES
+    // fetch -> MAKES THE INITIALIZATION AN EARLY TYPE, EACH TIME IT ASKS FOR AN
+    // MOVIE, IT'S GOING TO COME WITH ALL THE CHARACTERS
     @JoinTable(
             name = "movie_characters",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id"))
     private List<CharacterEntity> characters = new ArrayList<>();
-
-    //INTERMEDIATE TABLE BETWEEN MOVIES AND GENRES
+//
+//    //INTERMEDIATE TABLE BETWEEN MOVIES AND GENRES
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    // fetch -> HACE QUE LA INICIALIZACIÓN SEA DE TIPO TEMPRANA, CADA VEZ QUE PIDA UNA
-    // PELÍCULA, VA A VENIR CON TODOS LOS GÉNEROS
+    // fetch -> MAKES THE INITIALIZATION AN EARLY TYPE, EACH TIME IT ASKS FOR AN
+    // MOVIE, IT'S GOING TO COME WITH ALL GENRES
     @JoinTable(
-            name = "movie_genres", 
+            name = "movie_genres",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<GenreEntity> genres = new ArrayList<>();
 
-//    //SOFT DELETE
-//    private boolean deleted = Boolean.FALSE;
-//
-//    //ADD CHARACTER
-//    public void addCharacter(CharacterEntity character) {
-//        this.characters.add(character);
-//    }
-//
-//    //REMOVE CHARACTER
-//    public void removeCharacter(CharacterEntity character) {
-//        this.characters.remove(character);
-//    }
-//
-//    // ADD GENRE
-//    public void addGenre(GenreEntity genre) {
-//        this.genres.add(genre);
-//    }
-//
-//    //REMOVE GENRE
-//    public void removeGenre(GenreEntity genre) {
-//        this.genres.remove(genre);
-//    }
+    // ATTRIBUTE TO SOFT DELETE
+    private boolean deleted = Boolean.FALSE;
+
+    //ADD CHARACTER
+    public void addCharacter(CharacterEntity character) {
+        this.characters.add(character);
+    }
+
+    //REMOVE CHARACTER
+    public void removeCharacter(CharacterEntity character) {
+        this.characters.remove(character);
+    }
+
+    // ADD GENRE
+    public void addGenre(GenreEntity genre) {
+        this.genres.add(genre);
+    }
+
+    //REMOVE GENRE
+    public void removeGenre(GenreEntity genre) {
+        this.genres.remove(genre);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+
+        if (object == null) {
+            return false;
+        }
+        
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+
+        final MovieEntity other = (MovieEntity) object;
+
+        return other.id.equals(id);
+    }
 }
