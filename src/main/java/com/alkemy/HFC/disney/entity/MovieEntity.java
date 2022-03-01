@@ -58,10 +58,20 @@ public class MovieEntity {
 
     @Nullable
     // FROM 1 UP TO 5
-    private Integer rating;
+    private float rating;
 
+    // ATTRIBUTE TO SOFT DELETE
+    private boolean deleted = Boolean.FALSE;
+
+    // RELATION BETWEEN ENTITIES
+    // MOVIE -> CHARACTER
+    //
     //NTERMEDIATE TABLE BETWEEN CHARACTERS AND MOVIES
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {
+        CascadeType.DETACH,
+        CascadeType.PERSIST,
+        CascadeType.MERGE,
+        CascadeType.REFRESH}, fetch = FetchType.LAZY)
     // fetch -> MAKES THE INITIALIZATION AN EARLY TYPE, EACH TIME IT ASKS FOR AN
     // MOVIE, IT'S GOING TO COME WITH ALL THE CHARACTERS
     @JoinTable(
@@ -69,9 +79,15 @@ public class MovieEntity {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id"))
     private List<CharacterEntity> characters = new ArrayList<>();
-//
-//    //INTERMEDIATE TABLE BETWEEN MOVIES AND GENRES
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+
+    //MOVIE -> GENRE
+    //
+    //INTERMEDIATE TABLE BETWEEN MOVIES AND GENRES
+    @ManyToMany(cascade = {
+        CascadeType.DETACH,
+        CascadeType.PERSIST,
+        CascadeType.MERGE,
+        CascadeType.REFRESH}, fetch = FetchType.LAZY)
     // fetch -> MAKES THE INITIALIZATION AN EARLY TYPE, EACH TIME IT ASKS FOR AN
     // MOVIE, IT'S GOING TO COME WITH ALL GENRES
     @JoinTable(
@@ -79,43 +95,31 @@ public class MovieEntity {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<GenreEntity> genres = new ArrayList<>();
+//
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+//        CascadeType.MERGE, CascadeType.REFRESH})
+//    @JoinColumn(name = "genre_id", insertable = false, updatable = false)
+//    private GenreEntity genre;
+//
+//    @Column(name = "genre_id", nullable = false)
+//    private String genreId;
 
-    // ATTRIBUTE TO SOFT DELETE
-    private boolean deleted = Boolean.FALSE;
-
-    //ADD CHARACTER
-    public void addCharacter(CharacterEntity character) {
-        this.characters.add(character);
-    }
-
-    //REMOVE CHARACTER
-    public void removeCharacter(CharacterEntity character) {
-        this.characters.remove(character);
-    }
-
-    // ADD GENRE
-    public void addGenre(GenreEntity genre) {
-        this.genres.add(genre);
-    }
-
-    //REMOVE GENRE
-    public void removeGenre(GenreEntity genre) {
-        this.genres.remove(genre);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-
-        if (object == null) {
-            return false;
-        }
-        
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-
-        final MovieEntity other = (MovieEntity) object;
-
-        return other.id.equals(id);
-    }
+//    //ADD CHARACTER
+//    public void addCharacter(CharacterEntity character) {
+//        this.characters.add(character);
+//    }
+//
+//    //REMOVE CHARACTER
+//    public void removeCharacter(CharacterEntity character) {
+//        this.characters.remove(character);
+//    }
+//    // ADD GENRE
+//    public void addGenre(GenreEntity genre) {
+//        this.genre.add(genre);
+//    }
+//
+//    //REMOVE GENRE
+//    public void removeGenre(GenreEntity genre) {
+//        this.genre.remove(genre);
+//    }
 }

@@ -46,9 +46,18 @@ public class GenreEntity {
 
     private String image;
 
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MovieEntity> movies = new ArrayList<>();
-
     // ATTRIBUTE TO SOFT DELETE
     private boolean deleted = Boolean.FALSE;
+
+    // RELATION BETWEEN ENTITIES
+    // GENRE -> MOVIE
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = {
+        CascadeType.DETACH,
+        CascadeType.MERGE,
+        CascadeType.PERSIST,
+        CascadeType.REFRESH})
+    private List<MovieEntity> movies = new ArrayList<>();
+
+//    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<MovieEntity> movies = new ArrayList<>();
 }

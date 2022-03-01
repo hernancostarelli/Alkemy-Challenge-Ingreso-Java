@@ -52,19 +52,21 @@ public class CharacterEntity {
 
     private String biography;
 
-    @ManyToMany(mappedBy = "characters", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<MovieEntity> movies = new ArrayList<>();
-
     // ATTRIBUTE TO SOFT DELETE
     private boolean deleted = Boolean.FALSE;
 
-    //ADD MOVIE
-    public void addMovie(MovieEntity movie) {
-        this.movies.add(movie);
-    }
+    // RELATION BETWEEN ENTITIES
+    // CHARACTER -> MOVIE
+    @ManyToMany(mappedBy = "characters", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MovieEntity> movies = new ArrayList<>();
 
-    //REMOVE MOVIE
-    public void removeMovie(MovieEntity movie) {
-        this.movies.remove(movie);
-    }
+//    //ADD MOVIE
+//    public void addMovie(MovieEntity movie) {
+//        this.movies.add(movie);
+//    }
+//
+//    //REMOVE MOVIE
+//    public void removeMovie(MovieEntity movie) {
+//        this.movies.remove(movie);
+//    }
 }

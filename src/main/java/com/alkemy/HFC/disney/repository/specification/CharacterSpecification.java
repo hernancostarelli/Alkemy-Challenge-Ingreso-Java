@@ -27,6 +27,13 @@ public class CharacterSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             // CREATING A DYNAMIC QUERY, hasLength() CHECKS IF IT EXIST
+            // FILTER BY ID
+            if (filterDTO.getId() != null) {
+                predicates.add(
+                        criteriaBuilder.equal(root.get("id"), filterDTO.getId())
+                );
+            }
+
             // FILTER BY NAME
             if (StringUtils.hasLength(filterDTO.getName())) {
                 predicates.add(
@@ -39,6 +46,16 @@ public class CharacterSpecification {
             if (filterDTO.getAge() != null) {
                 predicates.add(
                         criteriaBuilder.equal(root.get("age"), filterDTO.getAge())
+                );
+            }
+
+            // FILTER BY WEIGHT
+            if (filterDTO.getWeight() != null) {
+                predicates.add(
+                        criteriaBuilder.like(
+                                root.get("weight").as(String.class),
+                                "%" + filterDTO.getWeight() + "%"
+                        )
                 );
             }
 
