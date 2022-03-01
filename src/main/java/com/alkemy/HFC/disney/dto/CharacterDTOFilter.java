@@ -1,6 +1,6 @@
 package com.alkemy.HFC.disney.dto;
 
-import java.util.Set;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CharacterDTOFilter {
 
+    private String id;
     private String name;
     private Integer age;
-    private Set<String> movies;
+    private Double weight;
+    private List<MovieDTO> movies;
     private String order;
 
     public boolean isASC() {

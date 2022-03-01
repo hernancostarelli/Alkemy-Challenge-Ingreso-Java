@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CharacterDTOBasic {
+public class GenreDTOBasic {
 
     private String id;
     private String name;

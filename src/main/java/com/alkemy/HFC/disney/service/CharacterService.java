@@ -2,9 +2,8 @@ package com.alkemy.HFC.disney.service;
 
 import com.alkemy.HFC.disney.dto.CharacterDTO;
 import com.alkemy.HFC.disney.dto.CharacterDTOBasic;
-import com.alkemy.HFC.disney.entity.CharacterEntity;
+import com.alkemy.HFC.disney.dto.MovieDTO;
 import java.util.List;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,23 +11,16 @@ public interface CharacterService {
 
     public CharacterDTO saveCharacter(CharacterDTO characterDTO);
 
-//    public CharacterDTOBasic saveCharacterBasic(CharacterDTOBasic characterDTO);
-//    
-    public List<CharacterDTO> getAllCharacter();
+    public CharacterDTO modifyCharacter(String idCharacter, CharacterDTO characterDTO);
 
     public void deleteCharacter(String idCharacter);
 
-    public CharacterDTO modifyCharacter(String idCharacter, CharacterDTO characterDTO);
+    List<CharacterDTOBasic> getAllCharacterBasic();
 
-    List<CharacterDTOBasic> getBasicCharacterList();
+    List<CharacterDTO> getAllCharacter();
 
-    public CharacterEntity getCharacterById(String idCharacter);
+    List<CharacterDTO> getCharacterByFilters(String id, String name, Integer age, Double weight, List<MovieDTO> movies, String order);
 
-    public List<CharacterDTO> getCharacterByFilters(String name, Integer age, Set<String> movies, String order);
+    CharacterDTO getCharacterById(String idCharacter);
 
-    public CharacterDTO getCharacterDetailById(String idCharacter);
-
-    public void addMovie(String idCharacter, String idMovie);
-
-    public void removeMovie(String idCharacter, String idMovie);
 }

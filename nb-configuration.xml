@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-shared-configuration>
+    <!--
+This file contains additional configuration written by modules in the NetBeans IDE.
+The configuration is intended to be shared among all the users of project and
+therefore it is assumed to be part of version control checkout.
+Without this configuration present, some functionality in the IDE may be limited or fail altogether.
+-->
+    <config-data xmlns="http://www.netbeans.org/ns/maven-config-data/1">
+        <configurations>
+            <configuration id="API_KEY_DISNEY" profiles="">
+                <property name="Env.API_KEY_DISNEY">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</property>
+            </configuration>
+        </configurations>
+    </config-data>
+</project-shared-configuration>
