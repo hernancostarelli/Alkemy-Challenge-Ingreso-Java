@@ -15,7 +15,7 @@ Desarrollar una API para explorar el mundo de Disney, la cual permitirá conocer
 
 ### 1. Modelado de Base de Datos
 - **Personaje:** deberá tener,
-  - **Imagen.
+  - Imagen.
   - Nombre.
   - Edad.
   - Peso.
