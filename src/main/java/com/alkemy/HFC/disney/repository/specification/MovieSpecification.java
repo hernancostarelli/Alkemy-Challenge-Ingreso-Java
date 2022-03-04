@@ -11,9 +11,11 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+@Component
 public class MovieSpecification {
 
     // RECEIVE THE LIST OF DTO FILTERS
@@ -26,12 +28,7 @@ public class MovieSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             // CREATING A DYNAMIC QUERY, hasLength() CHECKS IF IT EXIST
-             // FILTER BY ID
-            if (movieFilters.getId() != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("id"), movieFilters.getId())
-                );
-            }
+            //
             // FILTER BY TITLE
             if (StringUtils.hasLength(movieFilters.getTitle())) {
                 predicates.add(
@@ -44,15 +41,15 @@ public class MovieSpecification {
 
             // FILTER BY CHARECTER
             if (!CollectionUtils.isEmpty(movieFilters.getCharacters())) {
-                Join<MovieEntity, CharacterEntity> join = root.join("movieCharacters", JoinType.INNER);
-                Expression<String> charactersId = join.get("id");
+                Join<MovieEntity, CharacterEntity> join = root.join("characters", JoinType.INNER);
+                Expression<String> charactersId = join.get("charactersId");
                 predicates.add(charactersId.in(movieFilters.getCharacters()));
             }
-            
+
             // FILTER BY GENRE
             if (!CollectionUtils.isEmpty(movieFilters.getGenres())) {
-                Join<MovieEntity, GenreEntity> join = root.join("movieGenres", JoinType.INNER);
-                Expression<String> genresId = join.get("id");
+                Join<MovieEntity, GenreEntity> join = root.join("genres", JoinType.INNER);
+                Expression<String> genresId = join.get("genresId");
                 predicates.add(genresId.in(movieFilters.getGenres()));
             }
 

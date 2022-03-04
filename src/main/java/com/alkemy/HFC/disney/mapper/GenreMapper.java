@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GenreMapper {
 
-    // MAPPER FOR FROM DTO GENRE TO ENTITY
+    // MAPPER TO PASS FROM DTO GENRE TO ENTITY GENRE
     public GenreEntity genreDTO2Entity(GenreDTO genreDTO) {
 
         GenreEntity genreEntity = new GenreEntity();
@@ -20,7 +20,7 @@ public class GenreMapper {
         return genreEntity;
     }
 
-    // MAPPER FOR FROM ENTITY TO DTO GENRE
+    // MAPPER TO PASS FROM ENTITY GENRE TO DTO GENRE
     public GenreDTO genreEntity2DTO(GenreEntity genreEntity) {
 
         GenreDTO genreDTO = new GenreDTO();
@@ -42,15 +42,18 @@ public class GenreMapper {
         return genreDTOList;
     }
 
+    // MAPPER TO PASS FROM ENTITY GENRE TO BASIC DTO GENRE
     public GenreDTOBasic genreEntity2BasicDTO(GenreEntity genreEntity) {
 
         GenreDTOBasic genreDTOBasic = new GenreDTOBasic();
         genreDTOBasic.setId(genreEntity.getId());
         genreDTOBasic.setName(genreEntity.getName());
         genreDTOBasic.setImage(genreEntity.getImage());
+
         return genreDTOBasic;
     }
 
+    // MAPPER FOR RETURN A LIST OF BASIC DTO GERNRES
     public List<GenreDTOBasic> genreEntityList2DTOBasicList(List<GenreEntity> entities) {
 
         List<GenreDTOBasic> genreDTOBasicList = new ArrayList<>();
@@ -61,6 +64,7 @@ public class GenreMapper {
         return genreDTOBasicList;
     }
 
+    // MAPPER FOR RETURN A LIST OF ENTITY GERNRES
     List<GenreEntity> genreDTOList2EntityList(List<GenreDTO> entities) {
 
         List<GenreEntity> genreEnriryList = new ArrayList<>();
@@ -70,14 +74,4 @@ public class GenreMapper {
         }
         return genreEnriryList;
     }
-
-//    // MAPPER FOR GENRE DTO LIST TO GENRE ENTITY SET CONVERSION
-//    public Set<GenreEntity> genreDTOList2EntitySet(List<GenreDTO> genreDTOList) {
-//        return genreDTOList.stream().map(genreDTO -> genreDTO2Entity(genreDTO)).collect(Collectors.toSet());
-//    }
-//
-//    // MAPPER FOR GENRE ENTITY SET TO GENRE DTO LIST CONVERSION
-//    public List<GenreDTO> genreEntitySet2DTOList(Collection<GenreEntity> genreEntitySet, boolean loadMovies) {
-//        return genreEntitySet.stream().map(genre -> genreEntity2DTO(genre)).collect(Collectors.toList());
-//    }
 }

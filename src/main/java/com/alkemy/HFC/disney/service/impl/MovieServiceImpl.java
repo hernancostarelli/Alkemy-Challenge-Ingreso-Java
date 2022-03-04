@@ -1,13 +1,13 @@
 package com.alkemy.HFC.disney.service.impl;
 
-import com.alkemy.HFC.disney.dto.CharacterDTO;
-import com.alkemy.HFC.disney.dto.GenreDTO;
 import com.alkemy.HFC.disney.dto.MovieDTO;
 import com.alkemy.HFC.disney.dto.MovieDTOBasic;
 import com.alkemy.HFC.disney.dto.MovieDTOFilter;
 import com.alkemy.HFC.disney.entity.CharacterEntity;
 import com.alkemy.HFC.disney.entity.GenreEntity;
 import com.alkemy.HFC.disney.entity.MovieEntity;
+import com.alkemy.HFC.disney.exception.CharacterException;
+import com.alkemy.HFC.disney.exception.GenreException;
 import com.alkemy.HFC.disney.exception.MovieException;
 import com.alkemy.HFC.disney.exception.message.ExceptionMessage;
 import com.alkemy.HFC.disney.mapper.MovieMapper;
@@ -16,8 +16,8 @@ import com.alkemy.HFC.disney.repository.GenreRepository;
 import com.alkemy.HFC.disney.repository.MovieRepository;
 import com.alkemy.HFC.disney.repository.specification.MovieSpecification;
 import com.alkemy.HFC.disney.service.MovieService;
-import com.alkemy.HFC.disney.validations.DTOValidations;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +30,10 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private CharacterRepository characterRepository;
 
+    @Lazy
+    @Autowired
+    private CharacterEntity characterEntity;
+
     @Autowired
     private MovieMapper movieMapper;
 
@@ -40,50 +44,58 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private MovieSpecification movieSpecification;
 
+    @Lazy
+    @Autowired
+    private MovieEntity movieEntity;
+
     @Autowired
     private GenreRepository genreRepository;
 
+    @Lazy
     @Autowired
-    private DTOValidations dTOValidations;
+    private GenreEntity genreEntity;
 
+    // SAVE A MOVIE
     @Override
     public MovieDTO saveMovie(MovieDTO movieDTO) {
 
-//        if (dTOValidations.movieDTOIsValid(movieDTO)) {
-        MovieEntity movieEntity = movieMapper.movieDTO2Entity(movieDTO, false);
-        MovieEntity savedMovie = movieRepository.save(movieEntity);
-        MovieDTO savedMovieDTO = movieMapper.movieEntity2DTO(savedMovie, false);
+        try {
 
-        return savedMovieDTO;
-//        } else {
-//            throw new MovieException(ExceptionMessage.DTO_WRONG_DATA);
-//        }
-    }
+            MovieEntity movieEntity = movieMapper.movieDTO2Entity(movieDTO, false);
+            MovieEntity savedMovie = movieRepository.save(movieEntity);
+            MovieDTO savedMovieDTO = movieMapper.movieEntity2DTO(savedMovie, false);
 
-    @Override
-    public MovieDTO modifyMovie(String idMovie, MovieDTO movieDTO) {
+            return savedMovieDTO;
 
-        if (movieRepository.existsById(idMovie)) {
-            if (dTOValidations.movieDTOIsValid(movieDTO)) {
-
-                MovieEntity savedMovie = movieRepository.getById(idMovie);
-
-                movieMapper.movierEntityRefreshValues(savedMovie, movieDTO);
-
-                MovieEntity modifiedMovieEntity = movieRepository.save(savedMovie);
-
-                MovieDTO modifiedMovieDTO = movieMapper.movieEntity2DTO(modifiedMovieEntity, false);
-
-                return modifiedMovieDTO;
-
-            } else {
-                throw new MovieException(ExceptionMessage.DTO_WRONG_DATA);
-            }
-        } else {
-            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.DTO_WRONG_DATA);
         }
     }
 
+    // MODIFIES A MOVIE
+    @Override
+    public MovieDTO modifyMovie(String idMovie, MovieDTO movieDTO) {
+
+        try {
+            MovieEntity savedMovie = movieRepository.getById(idMovie);
+
+            movieMapper.movierEntityRefreshValues(savedMovie, movieDTO);
+
+            MovieEntity modifiedMovieEntity = movieRepository.save(savedMovie);
+
+            MovieDTO modifiedMovieDTO = movieMapper.movieEntity2DTO(modifiedMovieEntity, false);
+
+            return modifiedMovieDTO;
+
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
+
+        } catch (Exception exception) {
+            throw new MovieException(ExceptionMessage.DTO_WRONG_DATA);
+        }
+    }
+
+    // DELETE A MOVIE - SOFT DELETE
     @Override
     public void deleteMovie(String idMovie) {
 
@@ -94,6 +106,7 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
+    // LIST OF BASIC MOVIES
     @Override
     public List<MovieDTOBasic> getAllMovieBasic() {
 
@@ -103,6 +116,7 @@ public class MovieServiceImpl implements MovieService {
         return movieDTOBasicList;
     }
 
+    // SHOWS ALL MOVIES
     @Override
     public List<MovieDTO> getAllMovies() {
 
@@ -112,34 +126,27 @@ public class MovieServiceImpl implements MovieService {
         return movieDTOList;
     }
 
+    // LIST OF MOVIES BY FILTER
     @Override
-    public List<MovieDTO> getMovieByFilters(String id, String title, List<CharacterDTO> characters, List<GenreDTO> genres, String order) {
+    public List<MovieDTO> getMovieByFilters(String title, List<String> characters, List<String> genres, String order) {
 
-        if (id.isEmpty() || String.valueOf(id) == null
-                && title.isEmpty() || title == null
-                && characters.isEmpty() || characters == null
-                && genres.isEmpty() || genres == null
-                && order.isEmpty() || order == null) {
+        MovieDTOFilter movieDTOFilters = new MovieDTOFilter(title, characters, genres, order);
+        List<MovieEntity> movieEntityList = movieRepository.findAll(movieSpecification.getFiltered(movieDTOFilters));
+        List<MovieDTO> movieDTOList = movieMapper.movieEntityList2DTOList(movieEntityList, true);
 
-            return getAllMovies();
-
-        } else {
-            
-            MovieDTOFilter movieDTOFilters = new MovieDTOFilter(id, title, characters, genres, order);
-            List<MovieEntity> movieEntityList = movieRepository.findAll(movieSpecification.getFiltered(movieDTOFilters));
-            List<MovieDTO> movieDTOList = movieMapper.movieEntityList2DTOList(movieEntityList, true);
-
-            return movieDTOList;
-        }
+        return movieDTOList;
     }
 
+    // GET MOVIE DTO
     @Override
     public MovieDTO getMovieById(String idMovie) {
 
         if (movieRepository.existsById(idMovie)) {
+
             MovieEntity movieEntity = movieRepository.getById(idMovie);
             MovieDTO movieDTO = movieMapper.movieEntity2DTO(movieEntity, true);
             return movieDTO;
+
         } else {
             throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
         }
@@ -149,22 +156,22 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void addCharacterToMovie(String idCharacter, String idMovie) {
 
-        if (characterRepository.existsById(idCharacter) && movieRepository.existsById(idMovie)) {
+        try {
 
-            MovieEntity movie = movieRepository.getById(idMovie);
-            CharacterEntity character = characterRepository.getById(idCharacter);
+            movieEntity = movieRepository.getById(idMovie);
+            characterEntity = characterRepository.getById(idCharacter);
 
-            List<CharacterEntity> characters = movie.getCharacters();
+            List<CharacterEntity> characters = movieEntity.getCharacters();
 
-            characters.add(character);
-            movie.setCharacters(characters);
-            movieRepository.save(movie);
+            characters.add(characterEntity);
+            movieEntity.setCharacters(characters);
+            movieRepository.save(movieEntity);
 
-        } else if (!characterRepository.existsById(idCharacter)) {
-            throw new EntityNotFoundException(ExceptionMessage.CHARACTER_NOT_FOUND);
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
 
-        } else if (!movieRepository.existsById(idMovie)) {
-            throw new EntityNotFoundException(ExceptionMessage.MOVIE_NOT_FOUND);
+        } catch (CharacterException exception) {
+            throw new CharacterException(ExceptionMessage.CHARACTER_NOT_FOUND);
         }
     }
 
@@ -172,22 +179,21 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void removeCharacterFromMovie(String idCharacter, String idMovie) {
 
-        if (characterRepository.existsById(idCharacter) && movieRepository.existsById(idMovie)) {
+        try {
+            movieEntity = movieRepository.getById(idMovie);
+            characterEntity = characterRepository.getById(idCharacter);
 
-            MovieEntity movie = movieRepository.getById(idMovie);
-            CharacterEntity character = characterRepository.getById(idCharacter);
+            List<CharacterEntity> characters = movieEntity.getCharacters();
 
-            List<CharacterEntity> characters = movie.getCharacters();
+            characters.remove(characterEntity);
+            movieEntity.setCharacters(characters);
+            movieRepository.save(movieEntity);
 
-            characters.remove(character);
-            movie.setCharacters(characters);
-            movieRepository.save(movie);
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
 
-        } else if (!characterRepository.existsById(idCharacter)) {
-            throw new EntityNotFoundException(ExceptionMessage.CHARACTER_NOT_FOUND);
-
-        } else if (!movieRepository.existsById(idMovie)) {
-            throw new EntityNotFoundException(ExceptionMessage.MOVIE_NOT_FOUND);
+        } catch (CharacterException exception) {
+            throw new CharacterException(ExceptionMessage.CHARACTER_NOT_FOUND);
         }
     }
 
@@ -195,22 +201,21 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void addGenreToMovie(String idGenre, String idMovie) {
 
-        if (genreRepository.existsById(idGenre) && movieRepository.existsById(idMovie)) {
+        try {
+            movieEntity = movieRepository.getById(idMovie);
+            genreEntity = genreRepository.getById(idGenre);
 
-            MovieEntity movie = movieRepository.getById(idMovie);
-            GenreEntity genre = genreRepository.getById(idGenre);
+            List<GenreEntity> genres = movieEntity.getGenres();
 
-            List<GenreEntity> genres = movie.getGenres();
+            genres.add(genreEntity);
+            movieEntity.setGenres(genres);
+            movieRepository.save(movieEntity);
 
-            genres.add(genre);
-            movie.setGenres(genres);
-            movieRepository.save(movie);
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
 
-        } else if (!genreRepository.existsById(idGenre)) {
-            throw new EntityNotFoundException(ExceptionMessage.GENRE_NOT_FOUND);
-
-        } else if (!movieRepository.existsById(idMovie)) {
-            throw new EntityNotFoundException(ExceptionMessage.MOVIE_NOT_FOUND);
+        } catch (GenreException exception) {
+            throw new GenreException(ExceptionMessage.GENRE_NOT_FOUND);
         }
     }
 
@@ -218,22 +223,32 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void removeGenreFromMovie(String idGenre, String idMovie) {
 
-        if (genreRepository.existsById(idGenre) && movieRepository.existsById(idMovie)) {
+        try {
+            movieEntity = movieRepository.getById(idMovie);
+            genreEntity = genreRepository.getById(idGenre);
 
-            MovieEntity movie = movieRepository.getById(idMovie);
-            GenreEntity genre = genreRepository.getById(idGenre);
+            List<GenreEntity> genres = movieEntity.getGenres();
 
-            List<GenreEntity> genres = movie.getGenres();
+            genres.remove(genreEntity);
+            movieEntity.setGenres(genres);
+            movieRepository.save(movieEntity);
 
-            genres.remove(genre);
-            movie.setGenres(genres);
-            movieRepository.save(movie);
+        } catch (MovieException exception) {
+            throw new MovieException(ExceptionMessage.MOVIE_NOT_FOUND);
 
-        } else if (!genreRepository.existsById(idGenre)) {
-            throw new EntityNotFoundException(ExceptionMessage.GENRE_NOT_FOUND);
+        } catch (GenreException exception) {
+            throw new GenreException(ExceptionMessage.GENRE_NOT_FOUND);
+        }
+    }
 
-        } else if (!movieRepository.existsById(idMovie)) {
+    // GET MOVIE ENTITY
+    @Override
+    public MovieEntity getMovieEntityById(String idMovie) {
+
+        Optional<MovieEntity> movieEntity = movieRepository.findById(idMovie);
+        if (!movieEntity.isPresent()) {
             throw new EntityNotFoundException(ExceptionMessage.MOVIE_NOT_FOUND);
         }
+        return movieEntity.get();
     }
 }

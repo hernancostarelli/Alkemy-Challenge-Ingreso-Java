@@ -1,9 +1,8 @@
 package com.alkemy.HFC.disney.service;
 
-import com.alkemy.HFC.disney.dto.CharacterDTO;
-import com.alkemy.HFC.disney.dto.GenreDTO;
 import com.alkemy.HFC.disney.dto.MovieDTO;
 import com.alkemy.HFC.disney.dto.MovieDTOBasic;
+import com.alkemy.HFC.disney.entity.MovieEntity;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ public interface MovieService {
 
     List<MovieDTO> getAllMovies();
 
-    List<MovieDTO> getMovieByFilters(String id, String title, List<CharacterDTO> characters, List<GenreDTO> genres, String order);
+    List<MovieDTO> getMovieByFilters(String title, List<String> characters, List<String> genres, String order);
 
     MovieDTO getMovieById(String id);
 
@@ -31,4 +30,6 @@ public interface MovieService {
     void addGenreToMovie(String idGenre, String idMovie);
 
     void removeGenreFromMovie(String idGenre, String idMovie);
+
+    MovieEntity getMovieEntityById(String idMovie);
 }

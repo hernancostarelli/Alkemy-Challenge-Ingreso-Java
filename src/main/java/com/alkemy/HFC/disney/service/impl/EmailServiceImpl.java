@@ -1,6 +1,7 @@
-package com.alkemy.HFC.disney.auth.service.impl;
+package com.alkemy.HFC.disney.service.impl;
 
-import com.alkemy.HFC.disney.auth.service.EmailService;
+import com.alkemy.HFC.disney.service.EmailService;
+import com.alkemy.HFC.disney.exception.message.ExceptionMessage;
 import org.springframework.beans.factory.annotation.Value;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -24,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
     private String emailSender;
 
     @Override
-    public void sendWelcomeEmailTo(String to) {
+    public void sendWelcomeEmailTo(String to) throws IOException {
 
         String apiKey = environment.getProperty("API_KEY_DISNEY");
 
@@ -44,12 +45,8 @@ public class EmailServiceImpl implements EmailService {
             request.setBody(newMail.build());
             Response response = sendGrid.api(request);
 
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
-
         } catch (IOException exception) {
-            System.out.println("SEND EMAIL FAIL");
+            throw new IOException(ExceptionMessage.SEND_EMAIL_FAIL);
         }
     }
 }

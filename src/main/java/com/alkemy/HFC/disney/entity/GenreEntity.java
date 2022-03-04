@@ -57,7 +57,4 @@ public class GenreEntity {
         CascadeType.PERSIST,
         CascadeType.REFRESH})
     private List<MovieEntity> movies = new ArrayList<>();
-
-//    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    private List<MovieEntity> movies = new ArrayList<>();
 }

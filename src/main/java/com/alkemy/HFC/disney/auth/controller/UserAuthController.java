@@ -5,6 +5,7 @@ import com.alkemy.HFC.disney.auth.dto.AuthenticationResponse;
 import com.alkemy.HFC.disney.auth.dto.UserDTO;
 import com.alkemy.HFC.disney.auth.service.JwtUtils;
 import com.alkemy.HFC.disney.auth.service.UserDetailsCustomService;
+import com.alkemy.HFC.disney.exception.message.ExceptionMessage;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,9 @@ public class UserAuthController {
 
     @PostMapping("/singup")
     public ResponseEntity<AuthenticationResponse> singup(@Valid @RequestBody UserDTO userDTO) throws Exception {
-        
+
         userDetailsService.register(userDTO);
-        
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -44,7 +45,7 @@ public class UserAuthController {
     public ResponseEntity<AuthenticationResponse> singin(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         UserDetails userDetails;
-        
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -54,7 +55,7 @@ public class UserAuthController {
             userDetails = (UserDetails) authentication.getPrincipal();
 
         } catch (BadCredentialsException exception) {
-            throw new Exception("USERNAME OR PASSWORD INCORRECT", exception);
+            throw new Exception(ExceptionMessage.USERNAME_OR_PASSWORD_NOT_FOUND);
         }
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);

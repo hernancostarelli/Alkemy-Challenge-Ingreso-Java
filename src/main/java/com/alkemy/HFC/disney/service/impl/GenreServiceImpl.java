@@ -8,7 +8,6 @@ import com.alkemy.HFC.disney.exception.message.ExceptionMessage;
 import com.alkemy.HFC.disney.mapper.GenreMapper;
 import com.alkemy.HFC.disney.repository.GenreRepository;
 import com.alkemy.HFC.disney.service.GenreService;
-import com.alkemy.HFC.disney.validations.DTOValidations;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,46 +24,44 @@ public class GenreServiceImpl implements GenreService {
     @Autowired
     private GenreRepository genreRepository;
 
-    @Autowired
-    private DTOValidations dTOValidations;
-
+    // SAVE A GENRE
     @Override
     public GenreDTO saveGenre(GenreDTO genreDTO) {
 
-        if (dTOValidations.genreDTOIsValid(genreDTO)) {
-
+        try {
             GenreEntity genreEntity = genreMapper.genreDTO2Entity(genreDTO);
             GenreEntity genreSaved = genreRepository.save(genreEntity);
             GenreDTO genreSavedDTO = genreMapper.genreEntity2DTO(genreSaved);
-
             return genreSavedDTO;
 
-        } else {
+        } catch (GenreException exception) {
             throw new GenreException(ExceptionMessage.DTO_WRONG_DATA);
         }
     }
 
+    // MODIFIES A GENRE
     @Override
     public GenreDTO modifyGenre(String idGenre, GenreDTO genreDTO) {
 
-        if (genreRepository.existsById(idGenre)) {
-            if (dTOValidations.genreDTOIsValid(genreDTO)) {
+        try {
 
-                GenreEntity savedGenre = genreRepository.getById(idGenre);
-                savedGenre.setName(genreDTO.getName());
-                GenreEntity modifiedGenreEntity = genreRepository.save(savedGenre);
-                GenreDTO modifiedGenreDTO = genreMapper.genreEntity2DTO(modifiedGenreEntity);
+            GenreEntity savedGenre = genreRepository.getById(idGenre);
+            savedGenre.setName(genreDTO.getName());
+            savedGenre.setImage(genreDTO.getImage());
+            GenreEntity modifiedGenreEntity = genreRepository.save(savedGenre);
+            GenreDTO modifiedGenreDTO = genreMapper.genreEntity2DTO(modifiedGenreEntity);
 
-                return modifiedGenreDTO;
+            return modifiedGenreDTO;
 
-            } else {
-                throw new GenreException(ExceptionMessage.DTO_WRONG_DATA);
-            }
-        } else {
+        } catch (GenreException exception) {
             throw new GenreException(ExceptionMessage.GENRE_NOT_FOUND);
+
+        } catch (Exception exception) {
+            throw new GenreException(ExceptionMessage.DTO_WRONG_DATA);
         }
     }
 
+    // DELETE A GENRE - SOFT DELETE
     @Override
     public void deleteGenreById(String idGenre) {
 
@@ -84,6 +81,7 @@ public class GenreServiceImpl implements GenreService {
         return genreDTOList;
     }
 
+    // SHOWS ALL GENRES
     @Override
     public GenreEntity getGenreById(String idGenre) {
 
@@ -91,10 +89,10 @@ public class GenreServiceImpl implements GenreService {
         if (!genreEntity.isPresent()) {
             throw new GenreException(ExceptionMessage.GENRE_NOT_FOUND);
         }
-
         return genreEntity.get();
     }
 
+    // LIST OF BASIC GENRES
     @Override
     public List<GenreDTOBasic> getAllGenresBasic() {
 
@@ -103,5 +101,4 @@ public class GenreServiceImpl implements GenreService {
 
         return genreDTOBasicList;
     }
-
 }

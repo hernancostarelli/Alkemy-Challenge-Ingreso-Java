@@ -58,7 +58,7 @@ public class MovieEntity {
 
     @Nullable
     // FROM 1 UP TO 5
-    private float rating;
+    private Float rating;
 
     // ATTRIBUTE TO SOFT DELETE
     private boolean deleted = Boolean.FALSE;
@@ -95,31 +95,24 @@ public class MovieEntity {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<GenreEntity> genres = new ArrayList<>();
-//
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-//        CascadeType.MERGE, CascadeType.REFRESH})
-//    @JoinColumn(name = "genre_id", insertable = false, updatable = false)
-//    private GenreEntity genre;
-//
-//    @Column(name = "genre_id", nullable = false)
-//    private String genreId;
 
-//    //ADD CHARACTER
-//    public void addCharacter(CharacterEntity character) {
-//        this.characters.add(character);
-//    }
-//
-//    //REMOVE CHARACTER
-//    public void removeCharacter(CharacterEntity character) {
-//        this.characters.remove(character);
-//    }
-//    // ADD GENRE
-//    public void addGenre(GenreEntity genre) {
-//        this.genre.add(genre);
-//    }
-//
-//    //REMOVE GENRE
-//    public void removeGenre(GenreEntity genre) {
-//        this.genre.remove(genre);
-//    }
+    //ADD CHARACTER
+    public void addCharacter(CharacterEntity character) {
+        this.characters.add(character);
+    }
+
+    //REMOVE CHARACTER
+    public void removeCharacter(CharacterEntity character) {
+        this.characters.remove(character);
+    }
+
+    // ADD GENRE
+    public void addGenre(GenreEntity genre) {
+        this.genres.add(genre);
+    }
+
+    //REMOVE GENRE
+    public void removeGenre(GenreEntity genre) {
+        this.genres.remove(genre);
+    }
 }

@@ -16,7 +16,7 @@ public class CharacterMapper {
     @Autowired
     private MovieMapper movieMapper;
 
-    // MAPPER FOR FROM DTO CHARACTER TO ENTITY
+    // MAPPER TO PASS FROM DTO CHARACTER TO ENTITY CHARACTER
     public CharacterEntity characterDTO2Entity(CharacterDTO characterDTO) {
 
         CharacterEntity characterEntity = new CharacterEntity();
@@ -25,7 +25,7 @@ public class CharacterMapper {
         return characterEntity;
     }
 
-    // MAPPER FOR FROM ENTITY TO DTO CHARACTER
+    // MAPPER TO PASS FROM ENTITY CHARACTER TO DTO CHARACTER
     public CharacterDTO characterEntity2DTO(CharacterEntity characterEntity, boolean loadMovie) {
 
         CharacterDTO characterDTO = new CharacterDTO();
@@ -53,6 +53,7 @@ public class CharacterMapper {
         return characterDTOList;
     }
 
+    // MAPPER FOR RETURN A LIST OF BASIC DTO CHARACTERS
     public List<CharacterDTOBasic> entityList2DTOBasicList(List<CharacterEntity> entities) {
 
         List<CharacterDTOBasic> characterDTOBasicList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class CharacterMapper {
         return characterDTOBasicList;
     }
 
-    // MAPPER FOR FROM ENTITY TO BASIC DTO CHARACTER
+    // MAPPER TO PASS FROM ENTITY CHARACTER TO BASIC DTO CHARACTER
     public CharacterDTOBasic characterEntity2BasicDTO(CharacterEntity characterEntity) {
 
         CharacterDTOBasic characterDTOBasic = new CharacterDTOBasic();
@@ -74,16 +75,6 @@ public class CharacterMapper {
 
         return characterDTOBasic;
     }
-
-//    // MAPPER FOR CHARACTERDTOLIST TO CHARACTERENTITYSET CONVERSION
-//    public Set<CharacterEntity> characterDTOList2EntitySet(List<CharacterDTO> characterDTOList) {
-//        return characterDTOList.stream().map(characterDTO -> characterDTO2Entity(characterDTO)).collect(Collectors.toSet());
-//    }
-//
-//    // MAPPER FOR CHARACTERENTITYSET TO CHARACTERDTOLIST CONVERSION
-//    public List<CharacterDTO> characterEntitySet2DTOList(Collection<CharacterEntity> characterEntitySet, boolean loadMovies) {
-//        return characterEntitySet.stream().map(character -> characterEntity2DTO(character, loadMovies)).collect(Collectors.toList());
-//    }
 
     // UPDATE CHARACTER ENTITY
     public void characterEntityRefreshValues(CharacterEntity characterEntity, CharacterDTO characterDTO) {
@@ -114,9 +105,10 @@ public class CharacterMapper {
         characterDTOBasic.setImage(characterEntity.getImage());
     }
 
+    // MAPPER TO PASS FROM DTO CHARACTER LIST TO ENTITY CHARACTER LIST
     List<CharacterEntity> characterDTOList2EntityList(List<CharacterDTO> characters) {
-        
-         List<CharacterEntity> characterEntityList = new ArrayList<>();
+
+        List<CharacterEntity> characterEntityList = new ArrayList<>();
 
         for (CharacterDTO characterDTO : characters) {
             characterEntityList.add(characterDTO2Entity(characterDTO));

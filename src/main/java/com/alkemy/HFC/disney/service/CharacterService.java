@@ -2,7 +2,7 @@ package com.alkemy.HFC.disney.service;
 
 import com.alkemy.HFC.disney.dto.CharacterDTO;
 import com.alkemy.HFC.disney.dto.CharacterDTOBasic;
-import com.alkemy.HFC.disney.dto.MovieDTO;
+import com.alkemy.HFC.disney.entity.CharacterEntity;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +19,13 @@ public interface CharacterService {
 
     List<CharacterDTO> getAllCharacter();
 
-    List<CharacterDTO> getCharacterByFilters(String id, String name, Integer age, Double weight, List<MovieDTO> movies, String order);
+    List<CharacterDTO> getCharacterByFilters(String name, Integer age, List<String> movies, String order);
 
     CharacterDTO getCharacterById(String idCharacter);
 
+    void addMovieCharacter(String idCharacter, String idMovie);
+
+    void removeMovieCharacter(String idCharacter, String idMovie);
+
+    CharacterEntity getCharacterEntityById(String idCharacter) throws Exception;
 }

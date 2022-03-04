@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +30,11 @@ public class UserEntity implements UserDetails {
 
     @Email
     @Column(unique = true)
+    @NotNull(message = "THE USER NAME MUST NOT BE EMPTY")
     private String username;
 
     @Size(min = 8)
+    @NotNull(message = "THE PASSWORD MUST NOT BE EMPTY OR LESS THAN 8 CHARACTERS")
     private String password;
 
     private boolean accountNonExpired;

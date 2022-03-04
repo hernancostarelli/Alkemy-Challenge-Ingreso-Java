@@ -4,6 +4,7 @@ import com.alkemy.HFC.disney.dto.GenreDTO;
 import com.alkemy.HFC.disney.dto.GenreDTOBasic;
 import com.alkemy.HFC.disney.service.GenreService;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,20 +33,20 @@ public class GenreController {
 
     // ENDPOINT TO SAVE MOVIE GENRES
     @PostMapping
-    public ResponseEntity<GenreDTO> saveGenre(@RequestBody GenreDTO genreDTO) {
+    public ResponseEntity<GenreDTO> saveGenre(@Valid @RequestBody GenreDTO genreDTO) {
         GenreDTO savedGenre = genreService.saveGenre(genreDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGenre);
     }
 
     // ENDPOINT TO MODIFY MOVIE GENRES
-    @PutMapping("/{id}")
-    public ResponseEntity<GenreDTO> modifyGenre(@PathVariable String idGenre, @RequestBody GenreDTO genreDTO) {
+    @PutMapping("/{idGenre}")
+    public ResponseEntity<GenreDTO> modifyGenre(@Valid @PathVariable String idGenre, @RequestBody GenreDTO genreDTO) {
         GenreDTO editedGenre = genreService.modifyGenre(idGenre, genreDTO);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(editedGenre);
     }
 
     // ENDPOINT TO REMOVE MOVIE GENRES
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{idGenre}")
     public ResponseEntity<Void> deleteGenre(@PathVariable String idGenre) {
         genreService.deleteGenreById(idGenre);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

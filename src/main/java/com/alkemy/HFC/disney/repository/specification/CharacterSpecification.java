@@ -5,16 +5,16 @@ import com.alkemy.HFC.disney.entity.CharacterEntity;
 import com.alkemy.HFC.disney.entity.MovieEntity;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.criteria.Expression;
-
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+@Component
 public class CharacterSpecification {
 
     // RECEIVE THE LIST OF DTO FILTERS
@@ -27,13 +27,7 @@ public class CharacterSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             // CREATING A DYNAMIC QUERY, hasLength() CHECKS IF IT EXIST
-            // FILTER BY ID
-            if (filterDTO.getId() != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("id"), filterDTO.getId())
-                );
-            }
-
+            //
             // FILTER BY NAME
             if (StringUtils.hasLength(filterDTO.getName())) {
                 predicates.add(
@@ -49,19 +43,9 @@ public class CharacterSpecification {
                 );
             }
 
-            // FILTER BY WEIGHT
-            if (filterDTO.getWeight() != null) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                root.get("weight").as(String.class),
-                                "%" + filterDTO.getWeight() + "%"
-                        )
-                );
-            }
-
             // FILTER BY MOVIE
             if (!CollectionUtils.isEmpty(filterDTO.getMovies())) {
-                Join<CharacterEntity, MovieEntity> join = root.join("characterMovies", JoinType.INNER);
+                Join<CharacterEntity, MovieEntity> join = root.join("movies", JoinType.INNER);
                 Expression<String> moviesId = join.get("id");
                 predicates.add(moviesId.in(filterDTO.getMovies()));
             }

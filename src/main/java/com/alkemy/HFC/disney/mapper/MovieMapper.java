@@ -9,7 +9,6 @@ import com.alkemy.HFC.disney.entity.GenreEntity;
 import com.alkemy.HFC.disney.entity.MovieEntity;
 import com.alkemy.HFC.disney.exception.MovieException;
 import com.alkemy.HFC.disney.exception.message.ExceptionMessage;
-import com.alkemy.HFC.disney.validations.DTOValidations;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,28 +27,19 @@ public class MovieMapper {
     @Autowired
     private GenreMapper genreMapper;
 
-    @Autowired
-    private DTOValidations dTOValidations;
-
-    // MAPPER FOR FROM DTO MOVIE TO ENTITY
+    // MAPPER TO PASS FROM DTO MOVIE TO ENTITY
     public MovieEntity movieDTO2Entity(MovieDTO movieDTO, boolean loadCharacter) {
 
-//        if (dTOValidations.movieDTOIsValid(movieDTO)) {
-
-            MovieEntity movieEntity = new MovieEntity();
-            movierEntityRefreshValues(movieEntity, movieDTO);
-            return movieEntity;
-
-//        } else {
-//            throw new MovieException(ExceptionMessage.DTO_WRONG_DATA);
-//        }
+        MovieEntity movieEntity = new MovieEntity();
+        movierEntityRefreshValues(movieEntity, movieDTO);
+        return movieEntity;
     }
 
-    // MAPPER FOR FROM ENTITY TO DTO MOVIE
+    // MAPPER TO PASS FROM ENTITY TO DTO MOVIE
     public MovieDTO movieEntity2DTO(MovieEntity movieEntity, boolean loadCharacter) {
 
         if (movieEntity != null) {
-            
+
             MovieDTO movieDTO = new MovieDTO();
             movieDTORefreshValues(movieDTO, movieEntity, loadCharacter);
             return movieDTO;
@@ -59,7 +49,7 @@ public class MovieMapper {
         }
     }
 
-    // MAPPER FOR FROM ENTITY TO BASIC DTO MOVIE
+    // MAPPER TO PASS FROM ENTITY TO BASIC DTO MOVIE
     public MovieDTOBasic movieEntity2BasicDTO(MovieEntity movieEntity) {
 
         if (movieEntity != null) {
@@ -136,14 +126,13 @@ public class MovieMapper {
 
         movieEntity.setRating(movieDTO.getRating());
 
-        // SET CHARACTERS TO MOVIE
-        List<CharacterEntity> characterEntityList = characterMapper.characterDTOList2EntityList(movieDTO.getCharacters());
-        movieEntity.setCharacters(characterEntityList);
-
-        // SET GENRES TO MOVIE
-        List<GenreEntity> genreEntityList = genreMapper.genreDTOList2EntityList(movieDTO.getGenres());
-        movieEntity.setGenres(genreEntityList);
-
+//        // SET CHARACTERS TO MOVIE
+//        List<CharacterEntity> characterEntityList = characterMapper.characterDTOList2EntityList(movieDTO.getCharacters());
+//        movieEntity.setCharacters(characterEntityList);
+//
+//        // SET GENRES TO MOVIE
+//        List<GenreEntity> genreEntityList = genreMapper.genreDTOList2EntityList(movieDTO.getGenres());
+//        movieEntity.setGenres(genreEntityList);
     }
 
     // UPDATE DTO
@@ -165,7 +154,6 @@ public class MovieMapper {
             // CAST
             movieDTO.setGenres((List<GenreDTO>) genreMapper.genreEntityList2DTOList((List<GenreEntity>) movieEntity.getGenres()));
         }
-
     }
 
     // UPDATE DTO BASIC

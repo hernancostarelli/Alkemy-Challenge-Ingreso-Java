@@ -1,22 +1,24 @@
 package com.alkemy.HFC.disney.dto;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class MovieDTOFilter {
 
-    private String id;
     private String title;
-    private List<CharacterDTO> characters;
-    private List<GenreDTO> genres;
+    private List<String> characters;
+    private List<String> genres;
     private String order;
+
+    public MovieDTOFilter(String title, List<String> characters, List<String> genres, String order) {
+        this.title = title;
+        this.characters = characters;
+        this.genres = genres;
+        this.order = order;
+    }
 
     public boolean isASC() {
         return order.compareToIgnoreCase("ASC") == 0;
